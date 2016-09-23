@@ -1,0 +1,6 @@
+{
+  "name": "measuring",
+  "short_name": "measuring",
+  "start_url": "/",
+  "display": "standalone"
+}

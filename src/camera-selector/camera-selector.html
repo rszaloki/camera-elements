@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="camera-selector">
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+  <template>
+    <paper-listbox selected="{{selectedCameraId}}" attr-for-selected="value">
+        <template is="dom-repeat" items="[[cameras]]" as="camera"><paper-item value="[[camera.deviceId]]">[[camera.label]]</paper-item></template>
+    </paper-listbox>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'camera-selector',
+      ready: function(){
+          navigator.mediaDevices.enumerateDevices()
+          .then(deviceInfos => deviceInfos.filter(deviceInfo => deviceInfo.kind === 'videoinput'))
+          .then(videoDevices => videoDevices.map((videoDevice,index) => ({ deviceId: videoDevice.deviceId, label: videoDevice.label || 'label_'+index  })) )
+          .then(cameras => this.cameras = cameras );
+      },
+      properties: {
+          selectedCameraId:{
+              type:String,
+              notify:true
+          }
+      }
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,42 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="display-frame">
+    <style>
+      :host {
+        display: block;
+      }
+
+      canvas {
+        width:100%;
+      }
+    </style>
+  <template>
+    <canvas id="frame"></canvas>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'display-frame',
+      ready: function(){
+        this.context = this.$.frame.getContext('2d');
+      },
+      properties: {
+          frame:{
+              type:Object,
+              observer:'_frameChanged'
+          }
+      },
+      _frameChanged: function(newValue) {
+        let canvas = this.context.canvas;
+        if(canvas.width != newValue.width) {
+          canvas.width = newValue.width;
+        }
+        if(canvas.height != newValue.height) {
+          canvas.height = newValue.height;
+        }
+        this.context.putImageData(this.frame, 0, 0);
+      }
+    });
+  </script>
+</dom-module>

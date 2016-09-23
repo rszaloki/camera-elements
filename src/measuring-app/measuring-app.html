@@ -1,0 +1,30 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../camera-selector/camera-selector.html">
+<link rel="import" href="../camera-frames/camera-frames.html">
+<link rel="import" href="../display-frame/display-frame.html">
+
+<dom-module id="measuring-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <camera-selector selected-camera-id="{{activeCamera}}"></camera-selector>
+    <camera-frames camera-id="{{activeCamera}}" frame="{{currentFrame}}"></camera-frames>
+    <display-frame frame="{{currentFrame}}"></display-frame>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'measuring-app',
+
+      properties: {
+        activeCamera:String,
+        currentFrame: Object
+      },
+
+    });
+  </script>
+</dom-module>

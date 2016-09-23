@@ -1,0 +1,81 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="camera-frames">
+    <style>
+      :host {
+        display: none;
+      }
+    </style>
+  <script>
+    Polymer({
+
+      is: 'camera-frames',
+      ready: function(){
+        this.video = document.createElement('video');
+        this.video.autoplay = true;
+        this.canvas = document.createElement('canvas');
+        this.canvasCtx = this.canvas.getContext('2d');
+      },
+      properties: {
+          cameraId:{
+              type:String,
+              observer: '_cameraIdChanged',
+              value: null
+          },
+          frame:{
+            type:Object,
+            notify:true
+          }
+      },
+      _gotStream: function(stream){
+        this.stream = stream;
+        this.video.srcObject = stream;
+        return this.video;
+      },
+      _setupVideo: function(video){
+        return new Promise((resolve, reject) => {
+          let self = this;
+
+          function stateChangeListener(event) {
+            if (video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth > 0) {
+              self.canvas.width = video.videoWidth;
+              self.canvas.height = video.videoHeight;
+              video.removeEventListener('play',stateChangeListener);
+              resolve(video);
+            }
+          }
+
+          video.addEventListener('play', stateChangeListener);
+
+        });
+      },
+      _cameraIdChanged: function(newValue, oldValue){
+        if(oldValue && this.stream) {
+          this.stream.getTracks().forEach(track => track.stop());
+          this.stream = null;
+          this._stopPublishing();
+        }
+
+        if(newValue) {
+          navigator.mediaDevices.getUserMedia({
+            video:{ deviceId: newValue }
+          })
+          .then(this._gotStream.bind(this))
+          .then(this._setupVideo.bind(this))
+          .then(this._publish.bind(this))
+
+        }
+      },
+      _publish: function(){
+        this.canvasCtx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+        this.frame = this.canvasCtx.getImageData(0,0, this.canvas.width, this.canvas.height);
+        this.rafId = window.requestAnimationFrame(this._publish.bind(this));
+      },
+      _stopPublishing: function(){
+        if(this._rafId) {
+          window.cancelAnimationFrame(this.rafId);
+        }
+      }
+
+    });
+  </script>
+</dom-module>
