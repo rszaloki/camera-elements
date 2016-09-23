@@ -22,7 +22,7 @@
       ready: function(){
           navigator.mediaDevices.enumerateDevices()
           .then(deviceInfos => deviceInfos.filter(deviceInfo => deviceInfo.kind === 'videoinput'))
-          .then(videoDevices => videoDevices.map((videoDevice,index) => ({ deviceId: videoDevice.deviceId, label: videoDevice.label || 'label_'+index  })) )
+          .then(videoDevices => videoDevices.map((videoDevice,index) => ({ deviceId: videoDevice.deviceId, label: videoDevice.label || 'camera_'+index  })) )
           .then(cameras => this.cameras = cameras );
       },
       properties: {
